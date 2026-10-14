@@ -1,7 +1,7 @@
 package com.example.backend.service;
 
-import com.example.backend.dto.StudentRequest;
-import com.example.backend.dto.StudentResponse;
+import com.example.backend.dto.request.StudentRequest;
+import com.example.backend.dto.response.StudentResponse;
 import com.example.backend.entity.Student;
 import com.example.backend.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;

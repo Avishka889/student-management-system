@@ -1,7 +1,7 @@
 package com.example.backend.controller;
 
-import com.example.backend.dto.StudentRequest;
-import com.example.backend.dto.StudentResponse;
+import com.example.backend.dto.request.StudentRequest;
+import com.example.backend.dto.response.StudentResponse;
 import com.example.backend.service.StudentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
