@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import api, { AuthResponse } from "@/lib/api";
@@ -11,6 +11,14 @@ export default function LoginPage() {
   const [form, setForm] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
+
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("registered") === "true") {
+    setSuccess("Account created successfully. Please login.");
+  }
+}, []);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -48,6 +56,9 @@ export default function LoginPage() {
       {error && (
         <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</div>
       )}
+      {success && (
+        <div className="mb-4 rounded-lg bg-green-50 p-3 text-sm text-green-700">{success}</div>
+     )}
 
       <form onSubmit={handleSubmit} className="grid gap-4">
         <input name="username" placeholder="Username" value={form.username} onChange={handleChange} className={inputClass} />

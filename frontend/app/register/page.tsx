@@ -3,10 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import api, { AuthResponse } from "@/lib/api";
-import { saveAuth } from "@/lib/auth";
 
 export default function RegisterPage() {
-  const [form, setForm] = useState({ username: "", email: "", password: "" });
+  const [form, setForm] = useState({ fullName: "", phone: "", username: "", email: "", password: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -17,6 +16,8 @@ export default function RegisterPage() {
 
   function validate() {
     const e: Record<string, string> = {};
+    if (!form.fullName.trim()) e.fullName = "Full name is required";
+    if (form.phone && !/^[0-9]{10}$/.test(form.phone)) e.phone = "Phone must be 10 digits";
     if (form.username.length < 3) e.username = "Username must be at least 3 characters";
     if (!/^\S+@\S+\.\S+$/.test(form.email)) e.email = "Enter a valid email";
     if (form.password.length < 6) e.password = "Password must be at least 6 characters";
@@ -32,8 +33,7 @@ export default function RegisterPage() {
     try {
       setLoading(true);
       const res = await api.post<AuthResponse>("/auth/register", form);
-      saveAuth(res.data);
-      window.location.href = "/dashboard";
+      window.location.href = "/login?registered=true";
     } catch (err: any) {
       const data = err.response?.data;
       if (data?.details) setErrors(data.details);
@@ -56,6 +56,14 @@ export default function RegisterPage() {
       )}
 
       <form onSubmit={handleSubmit} className="grid gap-4">
+        <div>
+          <input name="fullName" placeholder="Full name" value={form.fullName} onChange={handleChange} className={inputClass} />
+          {errors.fullName && <p className="mt-1 text-xs text-red-600">{errors.fullName}</p>}
+        </div>
+        <div>
+          <input name="phone" placeholder="Phone (optional)" value={form.phone} onChange={handleChange} className={inputClass} />
+          {errors.phone && <p className="mt-1 text-xs text-red-600">{errors.phone}</p>}
+        </div>
         <div>
           <input name="username" placeholder="Username" value={form.username} onChange={handleChange} className={inputClass} />
           {errors.username && <p className="mt-1 text-xs text-red-600">{errors.username}</p>}

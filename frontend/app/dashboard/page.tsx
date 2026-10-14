@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getFullName } from "@/lib/auth";
 import Link from "next/link";
 import api, { Student, Course } from "@/lib/api";
 
@@ -9,6 +10,7 @@ export default function DashboardPage() {
   const [courseCount, setCourseCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [fullName, setFullName] = useState("");
 
   useEffect(() => {
     async function loadCounts() {
@@ -27,11 +29,13 @@ export default function DashboardPage() {
       }
     }
     loadCounts();
+    setFullName(getFullName() || "");
   }, []);
 
   return (
     <div>
-      <h1 className="mb-4 text-2xl font-bold">Dashboard</h1>
+      <h1 className="mb-1 text-2xl font-bold">Dashboard</h1>
+        {fullName && <p className="mb-4 text-gray-500">Welcome, {fullName} 👋</p>}
 
       {error && (
         <div className="mb-4 rounded bg-red-100 p-3 text-red-700">{error}</div>

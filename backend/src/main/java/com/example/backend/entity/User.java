@@ -19,6 +19,12 @@ public class User {
     private String email;
 
     @Column(nullable = false)
+    private String fullName;
+
+    @Column(nullable = true)
+    private String phone;
+
+    @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)

@@ -3,12 +3,14 @@ import { AuthResponse } from "./api";
 export function saveAuth(data: AuthResponse) {
   localStorage.setItem("token", data.token);
   localStorage.setItem("username", data.username);
+  localStorage.setItem("fullName", data.fullName);
   localStorage.setItem("role", data.role);
 }
 
 export function clearAuth() {
   localStorage.removeItem("token");
   localStorage.removeItem("username");
+  localStorage.removeItem("fullName");
   localStorage.removeItem("role");
 }
 
@@ -25,4 +27,9 @@ export function getUsername(): string | null {
 export function isLoggedIn(): boolean {
   if (typeof window === "undefined") return false;
   return !!localStorage.getItem("token");
+}
+
+export function getFullName(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("fullName");
 }
