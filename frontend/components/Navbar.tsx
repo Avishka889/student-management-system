@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { clearAuth, getUsername, getRole } from "@/lib/auth";
+import Logo from "./Logo";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -22,23 +23,28 @@ export default function Navbar() {
 
   const linkClass = (href: string) =>
     `rounded-md px-3 py-1.5 text-sm font-medium transition ${
-      pathname === href ? "bg-white/20 text-white" : "text-blue-100 hover:bg-white/10 hover:text-white"
+      pathname === href
+        ? "bg-secondary text-white"
+        : "text-blue-100 hover:bg-white/10 hover:text-white"
     }`;
 
   return (
-    <nav className="bg-blue-700 shadow">
-      <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2 p-4">
-        <span className="text-lg font-bold text-white">🎓 Student Management</span>
+    <nav className="sticky top-0 z-10 bg-primary shadow">
+      <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2 px-4 py-3">
+        <Link href="/dashboard" className="flex items-center gap-2">
+          <Logo />
+          <span className="text-lg font-bold text-white">EduTrack</span>
+        </Link>
         <div className="flex flex-wrap items-center gap-1">
           {username ? (
             <>
               <Link href="/dashboard" className={linkClass("/dashboard")}>Dashboard</Link>
               <Link href="/students" className={linkClass("/students")}>Students</Link>
               <Link href="/courses" className={linkClass("/courses")}>Courses</Link>
-              <span className="ml-2 rounded-full bg-white/20 px-3 py-1 text-xs text-white">
+              <span className="ml-2 rounded-full bg-white/15 px-3 py-1 text-xs text-white">
                 {username} ({role})
               </span>
-              <button onClick={logout} className="ml-1 rounded-md bg-white px-3 py-1.5 text-sm font-medium text-blue-700 hover:bg-blue-50">
+              <button onClick={logout} className="ml-1 rounded-md bg-white px-3 py-1.5 text-sm font-medium text-primary hover:bg-blue-50">
                 Logout
               </button>
             </>
