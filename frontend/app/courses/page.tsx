@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import api, { Course } from "@/lib/api";
+import { getRole } from "@/lib/auth";
 
 const emptyForm = {
   code: "",
@@ -11,6 +12,7 @@ const emptyForm = {
 };
 
 export default function CoursesPage() {
+  const isAdmin = getRole() === "ADMIN";
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -142,9 +144,11 @@ export default function CoursesPage() {
                   <td className="p-2">{c.description}</td>
                   <td className="p-2">{c.credits}</td>
                   <td className="p-2">
-                    <button onClick={() => handleEdit(c)} className="mr-3 text-blue-600 hover:underline">Edit</button>
-                    <button onClick={() => handleDelete(c.id)} className="text-red-600 hover:underline">Delete</button>
-                  </td>
+                     <button onClick={() => handleEdit(c)} className="mr-3 text-blue-600 hover:underline">Edit</button>
+                     {isAdmin && (
+                        <button onClick={() => handleDelete(c.id)} className="text-red-600 hover:underline">Delete</button>
+                     )}
+                 </td>
                 </tr>
               ))}
             </tbody>
