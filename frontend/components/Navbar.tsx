@@ -5,9 +5,10 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { clearAuth, getUsername, getRole, mustChangePassword } from "@/lib/auth";
 import Logo from "./Logo";
+import NotificationBell from "./NotificationBell";
 
 export default function Navbar() {
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "";
   const [username, setUsername] = useState<string | null>(null);
   const [role, setRole] = useState<string | null>(null);
 
@@ -46,14 +47,22 @@ export default function Navbar() {
                 <>
                   <Link href="/students" className={linkClass("/students")}>Students</Link>
                   <Link href="/tutors" className={linkClass("/tutors")}>Tutors</Link>
+                  <Link href="/enrollments" className={linkClass("/enrollments")}>Enrollments</Link>
                 </>
+              )}
+              {role === "STUDENT" && (
+                <Link href="/my-courses" className={linkClass("/my-courses")}>My courses</Link>
               )}
               <Link href="/courses" className={linkClass("/courses")}>Courses</Link>
               <Link href="/profile" className={linkClass("/profile")}>Profile</Link>
+              <NotificationBell />
               <span className="ml-2 rounded-full bg-white/15 px-3 py-1 text-xs text-white">
                 {username} ({role})
               </span>
-              <button onClick={logout} className="ml-1 rounded-md bg-white px-3 py-1.5 text-sm font-medium text-[#1E3A8A] hover:bg-blue-50">
+              <button
+                onClick={logout}
+                className="ml-1 rounded-md bg-white px-3 py-1.5 text-sm font-medium text-[#1E3A8A] hover:bg-blue-50"
+              >
                 Logout
               </button>
             </>
