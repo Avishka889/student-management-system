@@ -13,4 +13,6 @@ public class CourseResponse {
     private Long tutorId;
     private String tutorName;
     private String tutorPhotoUrl;
+    private long lectureCount;
+    private long enrolledCount;
 }
