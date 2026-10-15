@@ -26,6 +26,7 @@ export default function CoursesPage() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [search, setSearch] = useState("");
 
   async function loadData(admin: boolean) {
     try {
@@ -139,6 +140,11 @@ export default function CoursesPage() {
     }
   }
 
+  const q = search.trim().toLowerCase();
+  const filtered = courses.filter(
+    (c) => !q || `${c.code} ${c.name} ${c.tutorName || ""}`.toLowerCase().includes(q)
+  );
+
   const inputClass =
     "w-full rounded-lg border border-slate-300 bg-white px-3 py-2 focus:border-[#3B82F6] focus:outline-none focus:ring-2 focus:ring-[#3B82F6]/30";
   const errClass = "mt-1 text-xs text-red-600";
@@ -206,13 +212,20 @@ export default function CoursesPage() {
         </form>
       )}
 
+      <input
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="Search by course code, name or tutor"
+        className={`${inputClass} mb-4`}
+      />
+
       {loading ? (
         <p className="text-slate-500">Loading courses...</p>
-      ) : courses.length === 0 ? (
-        <p className="text-slate-500">No courses yet.</p>
+      ) : filtered.length === 0 ? (
+        <p className="text-slate-500">{courses.length === 0 ? "No courses yet." : "No courses match your search."}</p>
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {courses.map((c) => (
+          {filtered.map((c) => (
             <div key={c.id} className="flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md">
               {c.imageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -241,6 +254,9 @@ export default function CoursesPage() {
                   )}
                   <span>{c.tutorName || "Tutor not assigned"}</span>
                 </div>
+                <p className="mt-2 text-xs text-slate-400">
+                  {c.enrolledCount ?? 0} students &middot; {c.lectureCount ?? 0} lectures
+                </p>
 
                 <div className="mt-3 flex items-center gap-4 border-t border-slate-100 pt-3 text-sm">
                   <Link href={`/courses/${c.id}`} className="font-medium text-[#3B82F6] hover:underline">
