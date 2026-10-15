@@ -32,17 +32,25 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                // show the real error (404/500...) instead of a blank 403
+                .dispatcherTypeMatchers(jakarta.servlet.DispatcherType.ERROR).permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/students/me", "/api/students/me/**").authenticated()
                 .requestMatchers("/api/students/**").hasRole("ADMIN")
                 .requestMatchers("/api/tutors/me/**").hasRole("TUTOR")
-                .requestMatchers("/api/tutors/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/lectures/**").authenticated()
+                .requestMatchers("/api/lectures/*/complete").hasRole("STUDENT")
+                .requestMatchers("/api/lectures/**").hasRole("TUTOR")
+                .requestMatchers("/api/enrollments/me", "/api/enrollments/request/**").hasRole("STUDENT")
+                .requestMatchers(HttpMethod.DELETE, "/api/enrollments/*").hasRole("STUDENT")
+                .requestMatchers("/api/enrollments/**").hasRole("ADMIN")
+                .requestMatchers("/api/notifications/**").authenticated()
                 .requestMatchers("/api/tutors/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/courses/**").authenticated()
                 .requestMatchers("/api/courses/**").hasRole("ADMIN")
-                 .anyRequest().authenticated()
-             )
+                .anyRequest().authenticated()
+            )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
