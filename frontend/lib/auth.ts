@@ -28,3 +28,7 @@ export const mustChangePassword = () => read("mustChangePassword") === "true";
 export function clearMustChange() {
   localStorage.setItem("mustChangePassword", "false");
 }
+
+export function setFullName(name: string) {
+  localStorage.setItem("fullName", name);
+}

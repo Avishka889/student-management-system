@@ -63,3 +63,24 @@ export interface AuthResponse {
   role: string;
   mustChangePassword: boolean;
 }
+
+export interface Profile {
+  username: string;
+  fullName: string;
+  email: string;
+  phone?: string;
+  role: string;
+  photoUrl?: string;
+  bio?: string;
+}
+
+export interface Student {
+  id: number;
+  studentNumber?: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  courseId?: number;
+  courseName?: string;
+}
