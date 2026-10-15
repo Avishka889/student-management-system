@@ -19,5 +19,8 @@ public class StudentSyncRunner implements CommandLineRunner {
         userRepository.findAll().stream()
                 .filter(u -> u.getRole() == Role.STUDENT)
                 .forEach(studentService::ensureStudentRecord);
+
+        // students who already had a course get an APPROVED enrollment record
+        studentService.backfillEnrollments();
     }
 }

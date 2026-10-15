@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +18,16 @@ import java.util.List;
 public class StudentController {
 
     private final StudentService studentService;
+
+    // ---------- student's own endpoint ----------
+    // (course requests / leaving a course live in EnrollmentController)
+
+    @GetMapping("/me")
+    public StudentResponse me(Authentication auth) {
+        return studentService.getMyProfile(auth.getName());
+    }
+
+    // ---------- admin endpoints ----------
 
     @GetMapping
     public List<StudentResponse> getAll() {
