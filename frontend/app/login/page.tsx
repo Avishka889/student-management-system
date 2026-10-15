@@ -37,7 +37,7 @@ export default function LoginPage() {
       setLoading(true);
       const res = await api.post<AuthResponse>("/auth/login", form);
       saveAuth(res.data);
-      window.location.href = "/dashboard";
+      window.location.href = res.data.mustChangePassword ? "/profile" : "/dashboard";
     } catch (err: any) {
       setError(err.response?.data?.message || "Login failed. Please try again.");
     } finally {

@@ -32,21 +32,28 @@ api.interceptors.response.use(
 
 export default api;
 
-export interface Student {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone?: string;
-  address?: string;
-}
-
 export interface Course {
   id: number;
   code: string;
   name: string;
   description?: string;
   credits?: number;
+  imageUrl?: string;
+  tutorId?: number;
+  tutorName?: string;
+  tutorPhotoUrl?: string;
+}
+
+export interface Tutor {
+  id: number;
+  fullName: string;
+  username: string;
+  email: string;
+  phone?: string;
+  bio?: string;
+  photoUrl?: string;
+  active: boolean;
+  courseCount: number;
 }
 
 export interface AuthResponse {
@@ -54,4 +61,5 @@ export interface AuthResponse {
   username: string;
   fullName: string;
   role: string;
+  mustChangePassword: boolean;
 }

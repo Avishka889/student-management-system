@@ -5,31 +5,26 @@ export function saveAuth(data: AuthResponse) {
   localStorage.setItem("username", data.username);
   localStorage.setItem("fullName", data.fullName);
   localStorage.setItem("role", data.role);
+  localStorage.setItem("mustChangePassword", String(data.mustChangePassword));
 }
 
 export function clearAuth() {
-  localStorage.removeItem("token");
-  localStorage.removeItem("username");
-  localStorage.removeItem("fullName");
-  localStorage.removeItem("role");
+  ["token", "username", "fullName", "role", "mustChangePassword"].forEach((k) =>
+    localStorage.removeItem(k)
+  );
 }
 
-export function getRole(): string | null {
+function read(key: string): string | null {
   if (typeof window === "undefined") return null;
-  return localStorage.getItem("role");
+  return localStorage.getItem(key);
 }
 
-export function getUsername(): string | null {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem("username");
-}
+export const getRole = () => read("role");
+export const getUsername = () => read("username");
+export const getFullName = () => read("fullName");
+export const isLoggedIn = () => !!read("token");
+export const mustChangePassword = () => read("mustChangePassword") === "true";
 
-export function isLoggedIn(): boolean {
-  if (typeof window === "undefined") return false;
-  return !!localStorage.getItem("token");
-}
-
-export function getFullName(): string | null {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem("fullName");
+export function clearMustChange() {
+  localStorage.setItem("mustChangePassword", "false");
 }
