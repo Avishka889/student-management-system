@@ -42,6 +42,8 @@ export interface Course {
   tutorId?: number;
   tutorName?: string;
   tutorPhotoUrl?: string;
+  lectureCount?: number;
+  enrolledCount?: number;
 }
 
 export interface Tutor {
@@ -83,4 +85,43 @@ export interface Student {
   phone?: string;
   courseId?: number;
   courseName?: string;
+}
+
+export interface Lecture {
+  id: number;
+  courseId: number;
+  title: string;
+  description?: string;
+  videoUrl?: string;
+  pdfUrl?: string;
+  createdAt: string;
+  completed: boolean;
+}
+
+export type EnrollmentStatus = "PENDING" | "APPROVED" | "REJECTED";
+
+export interface Enrollment {
+  id: number;
+  studentId: number;
+  studentName: string;
+  studentNumber?: string;
+  courseId: number;
+  courseCode: string;
+  courseName: string;
+  courseImageUrl?: string;
+  tutorName?: string;
+  status: EnrollmentStatus;
+  requestedAt: string;
+  decidedAt?: string;
+  totalLectures: number;
+  completedLectures: number;
+  progressPercent: number;
+}
+
+export interface AppNotification {
+  id: number;
+  message: string;
+  link?: string;
+  seen: boolean;
+  createdAt: string;
 }

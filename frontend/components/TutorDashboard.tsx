@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import api, { Course } from "@/lib/api";
 import { getFullName } from "@/lib/auth";
+import { BarChart } from "./charts";
 
 export default function TutorDashboard() {
   const [fullName, setFullName] = useState("");
@@ -26,6 +28,8 @@ export default function TutorDashboard() {
   }, []);
 
   const totalCredits = courses.reduce((sum, c) => sum + (c.credits || 0), 0);
+  const totalStudents = courses.reduce((sum, c) => sum + (c.enrolledCount || 0), 0);
+  const totalLectures = courses.reduce((sum, c) => sum + (c.lectureCount || 0), 0);
   const cardClass = "rounded-xl border border-slate-200 bg-white p-5 shadow-sm";
 
   return (
@@ -39,7 +43,7 @@ export default function TutorDashboard() {
         <p className="text-slate-500">Loading your dashboard...</p>
       ) : (
         <>
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className={cardClass}>
               <p className="text-sm text-slate-500">My courses</p>
               <p className="text-3xl font-bold text-[#1E3A8A]">{courses.length}</p>
@@ -48,7 +52,22 @@ export default function TutorDashboard() {
               <p className="text-sm text-slate-500">Total credits</p>
               <p className="text-3xl font-bold text-[#1E3A8A]">{totalCredits}</p>
             </div>
+            <div className={cardClass}>
+              <p className="text-sm text-slate-500">Enrolled students</p>
+              <p className="text-3xl font-bold text-[#10B981]">{totalStudents}</p>
+            </div>
+            <div className={cardClass}>
+              <p className="text-sm text-slate-500">Lectures</p>
+              <p className="text-3xl font-bold text-[#3B82F6]">{totalLectures}</p>
+            </div>
           </div>
+
+          {courses.length > 0 && (
+            <div className={`${cardClass} mt-5`}>
+              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">Students per course</h2>
+              <BarChart data={courses.map((c) => ({ label: `${c.code} - ${c.name}`, value: c.enrolledCount || 0 }))} />
+            </div>
+          )}
 
           <h2 className="mb-3 mt-8 text-lg font-semibold text-slate-900">My courses</h2>
           {courses.length === 0 ? (
@@ -59,7 +78,7 @@ export default function TutorDashboard() {
           ) : (
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {courses.map((c) => (
-                <div key={c.id} className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                <div key={c.id} className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md">
                   {c.imageUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={c.imageUrl} alt={c.name} className="h-36 w-full object-cover" />
@@ -75,6 +94,12 @@ export default function TutorDashboard() {
                     </div>
                     <h3 className="font-semibold text-slate-900">{c.name}</h3>
                     <p className="mt-1 line-clamp-2 text-sm text-slate-500">{c.description}</p>
+                    <p className="mt-2 text-xs text-slate-400">
+                      {c.enrolledCount ?? 0} students &middot; {c.lectureCount ?? 0} lectures
+                    </p>
+                    <Link href={`/courses/${c.id}`} className="mt-3 inline-block text-sm font-medium text-[#3B82F6] hover:underline">
+                      Manage lectures &rarr;
+                    </Link>
                   </div>
                 </div>
               ))}
