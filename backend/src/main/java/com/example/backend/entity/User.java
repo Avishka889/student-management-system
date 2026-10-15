@@ -35,4 +35,7 @@ public class User {
 
     @Column(name = "active", columnDefinition = "boolean default true")
     private boolean active = true;
+
+    @Column(columnDefinition = "TEXT")
+    private String photoUrl;
 }

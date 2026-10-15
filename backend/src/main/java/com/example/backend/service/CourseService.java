@@ -26,6 +26,12 @@ public class CourseService {
         return toResponse(findCourse(id));
     }
 
+    public List<CourseResponse> getMyCourses(String username) {
+    Tutor tutor = tutorRepository.findByUserUsername(username)
+            .orElseThrow(() -> new RuntimeException("Tutor profile not found"));
+    return courseRepository.findByTutorId(tutor.getId()).stream().map(this::toResponse).toList();
+    }
+
     public CourseResponse createCourse(CourseRequest request) {
         Course course = new Course();
         mapToEntity(request, course);

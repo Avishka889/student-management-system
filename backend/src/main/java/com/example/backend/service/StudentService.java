@@ -53,6 +53,15 @@ public class StudentService {
         if (studentRepository.existsByEmail(user.getEmail())) {
             return;
         }
+        public void syncFromUser(User user) {
+    studentRepository.findByEmail(user.getEmail()).ifPresent(s -> {
+        String[] parts = user.getFullName().trim().split("\\s+", 2);
+        s.setFirstName(parts[0]);
+        s.setLastName(parts.length > 1 ? parts[1] : "-");
+        s.setPhone(user.getPhone());
+        studentRepository.save(s);
+    });
+}
         String[] parts = user.getFullName().trim().split("\\s+", 2);
         Student student = new Student();
         student.setFirstName(parts[0]);
