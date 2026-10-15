@@ -12,6 +12,9 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "student_number", unique = true)
+    private String studentNumber;
+
     @Column(nullable = false)
     private String firstName;
 
@@ -23,5 +26,7 @@ public class Student {
 
     private String phone;
 
-    private String address;
+    @ManyToOne
+    @JoinColumn(name = "course_id")
+    private Course course;
 }

@@ -21,7 +21,6 @@ public class User {
     @Column(nullable = false)
     private String fullName;
 
-    @Column(nullable = true)
     private String phone;
 
     @Column(nullable = false)
@@ -29,5 +28,11 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role = Role.USER;
+    private Role role = Role.STUDENT;
+
+    @Column(name = "must_change_password", columnDefinition = "boolean default false")
+    private boolean mustChangePassword = false;
+
+    @Column(name = "active", columnDefinition = "boolean default true")
+    private boolean active = true;
 }

@@ -7,6 +7,8 @@ import lombok.Data;
 @Data
 public class StudentRequest {
 
+    private String studentNumber;
+
     @NotBlank(message = "First name is required")
     private String firstName;
 
@@ -19,5 +21,5 @@ public class StudentRequest {
 
     private String phone;
 
-    private String address;
+    private Long courseId;
 }

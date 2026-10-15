@@ -18,7 +18,15 @@ public class Course {
     @Column(nullable = false)
     private String name;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     private Integer credits;
+
+    @Column(columnDefinition = "TEXT")
+    private String imageUrl;
+
+    @ManyToOne
+    @JoinColumn(name = "tutor_id")
+    private Tutor tutor;
 }
