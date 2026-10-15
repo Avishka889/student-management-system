@@ -8,4 +8,4 @@ FROM eclipse-temurin:21-jre
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Djdk.tls.namedGroups=secp256r1,secp384r1,x25519", "-XX:MaxRAMPercentage=75", "-jar", "app.jar"]
