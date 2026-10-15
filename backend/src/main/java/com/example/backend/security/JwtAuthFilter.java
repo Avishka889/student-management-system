@@ -1,5 +1,6 @@
 package com.example.backend.security;
 
+import com.example.backend.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -11,7 +12,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -20,6 +20,7 @@ import java.util.List;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -32,11 +33,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             if (jwtUtil.isValid(token)) {
                 Claims claims = jwtUtil.parseToken(token);
                 String username = claims.getSubject();
-                String role = claims.get("role", String.class);
 
-                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                        username, null, List.of(new SimpleGrantedAuthority("ROLE_" + role)));
-                SecurityContextHolder.getContext().setAuthentication(auth);
+                // Check the account in the database on every request, so a deactivated
+                // (or deleted) user is locked out immediately instead of when the token expires.
+                // The role also comes from the database, so a role change takes effect at once.
+                userRepository.findByUsername(username)
+                        .filter(user -> user.isActive())
+                        .ifPresent(user -> {
+                            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                                    user.getUsername(), null,
+                                    List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name())));
+                            SecurityContextHolder.getContext().setAuthentication(auth);
+                        });
             }
         }
         chain.doFilter(request, response);
