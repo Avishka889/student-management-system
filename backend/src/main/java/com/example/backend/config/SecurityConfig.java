@@ -1,7 +1,12 @@
 package com.example.backend.config;
 
+import com.example.backend.entity.Role;
+import com.example.backend.repository.UserRepository;
 import com.example.backend.security.JwtAuthFilter;
+import com.example.backend.service.StudentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,9 +26,14 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig {
+public class SecurityConfig implements CommandLineRunner {
 
     private final JwtAuthFilter jwtAuthFilter;
+    private final UserRepository userRepository;
+    private final StudentService studentService;
+
+    @Value("${app.cors.allowed-origins}")
+    private List<String> allowedOrigins;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -63,12 +73,23 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000"));
+        config.setAllowedOrigins(allowedOrigins);
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
+    }
+
+    // ---- startup student sync (formerly StudentSyncRunner) ----
+    @Override
+    public void run(String... args) {
+        userRepository.findAll().stream()
+                .filter(u -> u.getRole() == Role.STUDENT)
+                .forEach(studentService::ensureStudentRecord);
+
+        // students who already had a course get an APPROVED enrollment record
+        studentService.backfillEnrollments();
     }
 }
