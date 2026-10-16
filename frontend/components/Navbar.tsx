@@ -54,7 +54,9 @@ export default function Navbar() {
                 <Link href="/my-courses" className={linkClass("/my-courses")}>My courses</Link>
               )}
               <Link href="/courses" className={linkClass("/courses")}>Courses</Link>
-              <Link href="/profile" className={linkClass("/profile")}>Profile</Link>
+              <Link href="/profile" className={linkClass("/profile")}>
+                {role === "STUDENT" ? "My profile" : "Profile"}
+              </Link>
               <NotificationBell />
               <span className="ml-2 rounded-full bg-white/15 px-3 py-1 text-xs text-white">
                 {username} ({role})

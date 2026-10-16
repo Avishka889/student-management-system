@@ -2,13 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import api, { Student, Course, Profile, Enrollment } from "@/lib/api";
+import api, { Course, Profile, Enrollment } from "@/lib/api";
 import { ProgressBar } from "./charts";
 
 export default function StudentDashboard() {
   const [fullName, setFullName] = useState("");
-  const [photoUrl, setPhotoUrl] = useState<string | undefined>();
-  const [profile, setProfile] = useState<Student | null>(null);
   const [courses, setCourses] = useState<Course[]>([]);
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [search, setSearch] = useState("");
@@ -18,15 +16,12 @@ export default function StudentDashboard() {
   useEffect(() => {
     async function load() {
       try {
-        const [p, c, pr, en] = await Promise.all([
-          api.get<Student>("/students/me"),
+        const [c, pr, en] = await Promise.all([
           api.get<Course[]>("/courses"),
           api.get<Profile>("/profile"),
           api.get<Enrollment[]>("/enrollments/me"),
         ]);
-        setProfile(p.data);
         setCourses(c.data);
-        setPhotoUrl(pr.data.photoUrl);
         setFullName(pr.data.fullName);
         setEnrollments(en.data);
       } catch {
@@ -37,13 +32,6 @@ export default function StudentDashboard() {
     }
     load();
   }, []);
-
-  const initials = fullName
-    .split(" ")
-    .map((w) => w[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
 
   const statusByCourse = useMemo(() => {
     const m = new Map<number, Enrollment>();
@@ -60,13 +48,6 @@ export default function StudentDashboard() {
   const q = search.trim().toLowerCase();
   const filtered = courses.filter(
     (c) => !q || `${c.code} ${c.name} ${c.tutorName || ""}`.toLowerCase().includes(q)
-  );
-
-  const row = (label: string, value?: string | null) => (
-    <div className="flex justify-between gap-4 border-b border-slate-100 py-2 text-sm last:border-0">
-      <span className="text-slate-500">{label}</span>
-      <span className="text-right font-medium text-slate-900">{value || "-"}</span>
-    </div>
   );
 
   const cardClass = "rounded-xl border border-slate-200 bg-white p-5 shadow-sm";
@@ -102,30 +83,7 @@ export default function StudentDashboard() {
             </div>
           </div>
 
-          <div className="mt-5 grid gap-5 md:grid-cols-2">
-            <div className={cardClass}>
-              <div className="mb-4 flex items-center gap-4">
-                {photoUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={photoUrl} alt="Profile" className="h-14 w-14 rounded-full object-cover" />
-                ) : (
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#1E3A8A] text-lg font-bold text-white">
-                    {initials}
-                  </div>
-                )}
-                <div>
-                  <p className="font-semibold text-slate-900">{fullName}</p>
-                  <p className="text-sm text-slate-500">{profile?.studentNumber}</p>
-                </div>
-              </div>
-              <h2 className="mb-1 text-sm font-semibold uppercase tracking-wide text-slate-400">My profile</h2>
-              {row("Email", profile?.email)}
-              {row("Phone", profile?.phone)}
-              <Link href="/profile" className="mt-3 inline-block text-sm font-medium text-[#3B82F6] hover:underline">
-                Edit profile &rarr;
-              </Link>
-            </div>
-
+          <div className="mt-5">
             <div className={cardClass}>
               <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">My courses</h2>
               {approved.length === 0 ? (
